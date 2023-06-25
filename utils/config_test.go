@@ -2,9 +2,15 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 )
+
+func TestConfig(t *testing.T) {
+	var config ConfigStruct
+	if err := Read("./_test.json", &config); err != nil {
+		t.Fatal(err)
+	}
+}
 
 func TestMergeObj(t *testing.T) {
 	mergeValue := mergeObj(map[string]any{
@@ -26,10 +32,6 @@ func TestMergeObj(t *testing.T) {
 		},
 	})
 
-	data, _ := json.MarshalIndent(mergeValue, "", "  ")
-	// TODO add equality tests
-	fmt.Printf("%v\n", string(data))
-
 	// {
 	//     "a": "b",
 	//     "b": "c",
@@ -42,4 +44,8 @@ func TestMergeObj(t *testing.T) {
 	//         "d": "a"
 	//     }
 	// }
+	data, _ := json.Marshal(mergeValue)
+	if string(data) != `{"a":"a","b":"b","c":"c","d":["test2"],"e":{"a":"a","b":"b","c":["test"],"d":"a"}}` {
+		t.Fatal("mergeObj failed")
+	}
 }

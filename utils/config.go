@@ -1,36 +1,78 @@
 package utils
 
 import (
+	"encoding/json"
 	"os"
 	"reflect"
 )
 
-type Config struct{ path string }
-
-func NewConfig(path string) *Config { return &Config{path} }
-
-func (c Config) Read() {
-	os.ReadFile(c.path)
+// global configuration struct
+type ConfigStruct struct {
+	AllowOrigins []string `json:"allow_origins"`
 }
 
-func (c Config) Write() {
-	os.WriteFile(c.path, []byte{}, 0o666)
+// default configuration
+func (c ConfigStruct) Default() any {
+	return ConfigStruct{
+		AllowOrigins: []string{"*"},
+	}
 }
 
+// global configuration
+func Config() ConfigStruct {
+	var config ConfigStruct
+	if err := Read("config.json", &config); err != nil {
+		panic(err)
+	}
+	return config
+}
+
+type BaseConfig interface {
+	Default() any
+}
+
+// Read config, if file not exist, write default config
+func Read(path string, v BaseConfig) error {
+	file, err := os.ReadFile(path)
+	if os.IsNotExist(err) {
+		if err = Write(path, v); err != nil {
+			return err
+		}
+		return Read(path, v)
+	}
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(file, &v)
+}
+
+// Write config file
+func Write(path string, v BaseConfig) error {
+	var data any = v
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		data = v.Default()
+	}
+	rb, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, rb, 0o666)
+}
+
+// merge two object
 func mergeObj(old, new map[string]any) map[string]any {
 	for k, value := range new {
 		if oldValue, ok := old[k]; ok {
-			if v, ok := value.(map[string]any); ok {
-				// if oldValue is dict
-				if v2, ok := oldValue.(map[string]any); ok {
-					old[k] = mergeObj(v2, v)
-					continue
-				}
-			} else if _, ok := value.([]any); ok {
-				// if oldValue is list
-				if _, ok := oldValue.([]any); ok {
-					continue
-				}
+			oldValueType := reflect.TypeOf(oldValue).Kind()
+			valueType := reflect.TypeOf(value).Kind()
+
+			if valueType == reflect.Map && oldValueType == reflect.Map {
+				// if is dict
+				old[k] = mergeObj(oldValue.(map[string]any), value.(map[string]any))
+				continue
+			} else if valueType == reflect.Slice && oldValueType == reflect.Slice {
+				// if is list
+				continue
 			} else if reflect.TypeOf(oldValue) == reflect.TypeOf(value) {
 				continue
 			}
@@ -39,14 +81,4 @@ func mergeObj(old, new map[string]any) map[string]any {
 	}
 
 	return old
-}
-
-type ConfigStruct struct {
-	AllowOrigins []string `json:"allow_origins"`
-}
-
-func (c ConfigStruct) Default() ConfigStruct {
-	return ConfigStruct{
-		AllowOrigins: []string{"*"},
-	}
 }
