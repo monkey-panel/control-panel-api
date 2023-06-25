@@ -26,12 +26,12 @@ func mergeObj(old, new map[string]any) map[string]any {
 					old[k] = mergeObj(v2, v)
 					continue
 				}
-			} else if v, ok := value.([]any); ok {
+			} else if _, ok := value.([]any); ok {
 				// if oldValue is list
 				if _, ok := oldValue.([]any); ok {
 					continue
 				}
-			} else if reflect.TypeOf(oldValue) == reflect.TypeOf(v) {
+			} else if reflect.TypeOf(oldValue) == reflect.TypeOf(value) {
 				continue
 			}
 		}
