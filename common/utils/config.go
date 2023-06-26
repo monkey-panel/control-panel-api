@@ -73,7 +73,7 @@ func mergeObj(old, new map[string]any) map[string]any {
 			} else if valueType == reflect.Slice && oldValueType == reflect.Slice {
 				// if is list
 				continue
-			} else if reflect.TypeOf(oldValue) == reflect.TypeOf(value) {
+			} else if oldValueType == valueType {
 				continue
 			}
 		}

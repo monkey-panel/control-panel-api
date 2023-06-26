@@ -8,9 +8,9 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/a3510377/control-panel-api/database"
+	"github.com/a3510377/control-panel-api/common"
+	"github.com/a3510377/control-panel-api/common/database"
 	"github.com/a3510377/control-panel-api/routers"
-	"github.com/a3510377/control-panel-api/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,7 +20,7 @@ func main() {
 		panic(err)
 	}
 
-	container := utils.Container{DB: db}
+	container := common.Container{DB: db}
 	mode := gin.ReleaseMode
 	if len(os.Getenv("DEV")) > 0 {
 		mode = gin.DebugMode
@@ -28,11 +28,18 @@ func main() {
 	gin.SetMode(mode)
 	gin.ForceConsoleColor()
 
+	app := routers.Routers(container, routers.RouterConfig{
+		AllowOrigins: []string{"http://localhost:8080"}, // TODO: Add the allow origins config
+	})
+
+	app.Use(func(c *gin.Context) {
+		c.Set("DB", db)
+		c.Next()
+	})
+
 	srv := &http.Server{
-		Addr: "127.0.0.1:8000", // TODO: Add the address config
-		Handler: routers.Routers(container, routers.RouterConfig{
-			AllowOrigins: []string{"http://localhost:8080"}, // TODO: Add the allow origins config
-		}),
+		Addr:      "127.0.0.1:8000", // TODO: Add the address config
+		Handler:   app,
 		TLSConfig: nil, // TODO: Add the TLS config
 	}
 

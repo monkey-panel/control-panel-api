@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/a3510377/control-panel-api/utils"
+	"github.com/a3510377/control-panel-api/common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -9,7 +9,7 @@ func init() {
 	router = append(router, registerAuthRouter, registerUsersRouter)
 }
 
-func registerAuthRouter(container utils.Container, app *gin.RouterGroup) {
+func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 	authRouter := app.Group("/auth")
 
 	authRouter.POST("/login", func(c *gin.Context) {
@@ -19,7 +19,7 @@ func registerAuthRouter(container utils.Container, app *gin.RouterGroup) {
 	})
 }
 
-func registerUsersRouter(container utils.Container, app *gin.RouterGroup) {
+func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 	usersRouter := app.Group("/users")
 
 	usersRouter.GET("/@me")

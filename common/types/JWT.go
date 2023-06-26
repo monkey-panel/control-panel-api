@@ -1,10 +1,9 @@
-package utils
+package types
 
 import (
 	"net/http"
 	"time"
 
-	db_utils "github.com/a3510377/control-panel-api/database/utils"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -13,7 +12,7 @@ var jwtKey = []byte("test")
 type (
 	JWT    string
 	Claims struct {
-		ID db_utils.ID `json:"id"`
+		ID ID `json:"id"`
 		jwt.RegisteredClaims
 	}
 	RefreshToken struct {
@@ -22,7 +21,9 @@ type (
 	}
 )
 
-func New(newTime time.Duration) (token *RefreshToken, status int) { return Create(Claims{}, newTime) }
+func NewJWT(newTime time.Duration) (token *RefreshToken, status int) {
+	return Create(Claims{}, newTime)
+}
 
 func Create(claims Claims, newTime time.Duration) (token *RefreshToken, status int) {
 	expirationTime := time.Now().Add(newTime)

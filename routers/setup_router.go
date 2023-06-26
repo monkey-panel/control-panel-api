@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/a3510377/control-panel-api/common"
 	"github.com/a3510377/control-panel-api/routers/api"
-	"github.com/a3510377/control-panel-api/utils"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +15,7 @@ type RouterConfig struct {
 	AllowOrigins    []string
 }
 
-func Routers(container utils.Container, config RouterConfig) *gin.Engine {
+func Routers(container common.Container, config RouterConfig) *gin.Engine {
 	app := gin.Default()
 	app.Use(cors.New(corsConfig(config)))
 

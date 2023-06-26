@@ -1,7 +1,7 @@
 package database
 
 import (
-	. "github.com/a3510377/control-panel-api/database/utils"
+	. "github.com/a3510377/control-panel-api/common/types"
 	"gorm.io/gorm"
 )
 

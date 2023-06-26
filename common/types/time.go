@@ -1,4 +1,4 @@
-package utils
+package types
 
 import (
 	"database/sql/driver"
@@ -14,6 +14,9 @@ const (
 	StringTimeFormat = `"` + TimeFormat + `"`
 )
 
+func NewTime(time time.Time) Time { return Time(time.UTC()) }
+func NowTime() Time               { return NewTime(time.Now()) }
+
 func (t *Time) UnmarshalJSON(data []byte) error {
 	now, err := time.Parse(StringTimeFormat, string(data))
 	*t = Time(now)
@@ -26,9 +29,6 @@ func (t Time) MarshalJSON() ([]byte, error) {
 
 func (t Time) Time() time.Time { return time.Time(t) }
 func (t Time) String() string  { return t.Time().Format(TimeFormat) }
-
-func Now() Time               { return New(time.Now()) }
-func New(time time.Time) Time { return Time(time.UTC()) }
 
 // for sql
 func (t *Time) Scan(src any) error {

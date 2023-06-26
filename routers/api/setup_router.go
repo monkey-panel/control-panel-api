@@ -1,13 +1,13 @@
 package api
 
 import (
-	"github.com/a3510377/control-panel-api/utils"
+	"github.com/a3510377/control-panel-api/common"
 	"github.com/gin-gonic/gin"
 )
 
-var router = []func(utils.Container, *gin.RouterGroup){}
+var router = []func(common.Container, *gin.RouterGroup){}
 
-func RegisterRouter(container utils.Container, app *gin.RouterGroup) {
+func RegisterRouter(container common.Container, app *gin.RouterGroup) {
 	for _, f := range router {
 		f(container, app)
 	}
