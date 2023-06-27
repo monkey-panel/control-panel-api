@@ -1,7 +1,11 @@
 package api
 
 import (
+	"fmt"
+
 	"github.com/a3510377/control-panel-api/common"
+	"github.com/a3510377/control-panel-api/common/database"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,12 +14,24 @@ func init() {
 }
 
 func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
-	authRouter := app.Group("/auth")
+	db, authRouter := container.DB, app.Group("/auth")
 
 	authRouter.POST("/login", func(c *gin.Context) {
 	})
 
 	authRouter.POST("/register", func(c *gin.Context) {
+		var newUSer database.NewUser
+
+		if err := c.Bind(&newUSer); err != nil {
+			c.JSON(400, gin.H{
+				"code":    400,
+				"message": "Bad Request",
+			})
+			return
+		}
+
+		data, err := db.CreateUser(newUSer)
+		fmt.Println(data, err)
 	})
 }
 

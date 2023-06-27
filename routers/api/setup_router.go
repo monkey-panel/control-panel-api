@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/a3510377/control-panel-api/common"
+
 	"github.com/gin-gonic/gin"
 )
 

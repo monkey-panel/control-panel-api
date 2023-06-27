@@ -2,6 +2,7 @@ package database
 
 import (
 	. "github.com/a3510377/control-panel-api/common/types"
+
 	"gorm.io/gorm"
 )
 
@@ -12,8 +13,8 @@ func setupModel(db *DB) {
 
 // database base model struct
 type BaseModel struct {
-	ID        ID   `gorm:"primarykey"`
-	CreatedAt Time `gorm:"<-:create;autoCreateTime"`
+	ID        ID   `gorm:"primarykey" json:"id"`
+	CreatedAt Time `gorm:"<-:create;autoCreateTime" json:"create_at"`
 }
 
 // set ID
@@ -26,8 +27,8 @@ func (i *BaseModel) BeforeCreate(tx *gorm.DB) (err error) {
 type DBUser struct {
 	BaseModel
 	LoginUser
-	ID          `gorm:"primarykey;many2many:user_instance"`
-	Nickname    string
+	ID          ID     `gorm:"primarykey;many2many:user_instance" json:"id"`
+	Nickname    string `json:"nickname" validate:"min=1,max=32"`
 	Permissions Permission
 }
 
