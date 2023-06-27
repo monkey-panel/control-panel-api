@@ -18,7 +18,10 @@ type RouterConfig struct {
 
 func Routers(container common.Container, config RouterConfig) *gin.Engine {
 	app := gin.Default()
-	app.Use(cors.New(corsConfig(config)))
+	app.Use(func(c *gin.Context) {
+		c.Set("DB", container.DB)
+		c.Next()
+	}).Use(cors.New(corsConfig(config)))
 
 	app.NoRoute(append(config.NoRouteHandlers, func(c *gin.Context) {
 		if strings.HasPrefix(c.Request.URL.Path, "/api") {

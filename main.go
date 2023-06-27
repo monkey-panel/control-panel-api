@@ -33,11 +33,6 @@ func main() {
 		AllowOrigins: []string{"http://localhost:8080"}, // TODO: Add the allow origins config
 	})
 
-	app.Use(func(c *gin.Context) {
-		c.Set("DB", db)
-		c.Next()
-	})
-
 	srv := &http.Server{
 		Addr:      "127.0.0.1:8000", // TODO: Add the address config
 		Handler:   app,

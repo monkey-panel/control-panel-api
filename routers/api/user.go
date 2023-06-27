@@ -1,9 +1,11 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/a3510377/control-panel-api/common"
+	"github.com/a3510377/control-panel-api/common/codes"
 	"github.com/a3510377/control-panel-api/common/database"
 
 	"github.com/gin-gonic/gin"
@@ -30,8 +32,12 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 			return
 		}
 
-		data, err := db.CreateUser(newUSer)
-		fmt.Println(data, err)
+		_, err := db.CreateUser(newUSer)
+		if errors.Is(err, codes.UsernameAlreadyExists) {
+			c.JSON(400, codes.Response[*uint8](codes.UsernameAlreadyExists, nil))
+			return
+		}
+		fmt.Println(err)
 	})
 }
 

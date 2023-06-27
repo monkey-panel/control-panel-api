@@ -23,24 +23,27 @@ const (
 type (
 	Code     uint32
 	CodeData struct {
-		HttpCode uint16
-		Code     uint   `json:"code"`
-		Message  string `json:"message"`
+		HttpCode uint16 `json:"-"`
+		Code     Code   `json:"code"`
+		Message  string `json:"message,omitempty"`
 	}
 )
 
 type ResponseData[D any] struct {
 	CodeData
-	Data D `json:"data"`
+	Data D `json:"data,omitempty"`
 }
 
 var codesMap = map[Code]CodeData{
-	OK:         {200, 0, "OK"},
-	BadRequest: {400, 1, "Bad Request"},
-	Forbidden:  {403, 2, "Forbidden"},
+	OK:         {200, OK, "OK"},
+	BadRequest: {400, BadRequest, "Bad Request"},
+	Forbidden:  {403, Forbidden, "Forbidden"},
+
+	UsernameAlreadyExists: {400, UsernameAlreadyExists, "Username Already Exists"},
 }
 
 func (c Code) Base() CodeData { return codesMap[c] }
+func (c Code) Error() string  { return c.Base().Message }
 
 func Response[D any](code Code, data D) ResponseData[D] {
 	return ResponseData[D]{

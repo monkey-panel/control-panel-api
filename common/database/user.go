@@ -3,6 +3,7 @@ package database
 import (
 	"strings"
 
+	"github.com/a3510377/control-panel-api/common/codes"
 	. "github.com/a3510377/control-panel-api/common/types"
 )
 
@@ -21,7 +22,7 @@ type LoginUser struct {
 // create new user struct
 type NewUser struct {
 	LoginUser
-	Nickname string `json:"nickname" form:"nickname" validate:"min=1,max=32"`
+	Nickname string `json:"nickname" form:"nickname" validate:"max=32"`
 }
 
 func (d DB) CreateUser(user NewUser) (*UserInfo, error) {
@@ -36,8 +37,9 @@ func (d DB) CreateUser(user NewUser) (*UserInfo, error) {
 
 	if err := d.Create(&data).Error; err != nil {
 		if strings.HasPrefix(err.Error(), "UNIQUE constraint failed") {
-			return nil, err
+			return nil, codes.UsernameAlreadyExists
 		}
+		return nil, err
 	}
 
 	return &UserInfo{
