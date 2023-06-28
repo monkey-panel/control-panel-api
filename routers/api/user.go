@@ -18,17 +18,28 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 	db, authRouter := container.DB, app.Group("/auth")
 
 	authRouter.POST("/login", func(c *gin.Context) {
+		var loginUser database.LoginUser
+
+		if err := c.Bind(&loginUser); err != nil {
+			c.JSON(400, codes.Response[error](codes.InvalidFormBody, nil, common.TranslateError(err)))
+			return
+		}
+
+		// user, err := db.GetUserByLogin(loginUser)
+		// if errors.Is(err, codes.UserNotFound) {
+		// 	c.JSON(400, codes.Response[error](codes.UserNotFound, nil, nil))
+		// 	return
+		// }
+
+		// token, _ := common.NewJWT(user.ID)
+		// c.JSON(200, codes.Response(codes.OK, token, nil))
 	})
 
 	authRouter.POST("/register", func(c *gin.Context) {
 		var newUSer database.NewUser
 
 		if err := c.Bind(&newUSer); err != nil {
-			c.JSON(400, codes.Response[error](
-				codes.InvalidFormBody,
-				nil,
-				common.TranslateError(err),
-			))
+			c.JSON(400, codes.Response[error](codes.InvalidFormBody, nil, common.TranslateError(err)))
 			return
 		}
 
@@ -57,6 +68,3 @@ func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 	usersRouter.GET("/:id/instances/:id/members")
 	usersRouter.GET("/:id/instances/:id/members/:id")
 }
-
-// username:
-// password:
