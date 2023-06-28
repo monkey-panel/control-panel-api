@@ -4,24 +4,27 @@ import (
 	"encoding/json"
 	"os"
 	"reflect"
+	"time"
 )
 
 // global configuration struct
 type ConfigStruct struct {
 	AllowOrigins []string `json:"allow_origins"`
+	JWTTimeout   int64    `json:"jwt_timeout"`
 }
 
 // default configuration
 func (c ConfigStruct) Default() any {
 	return ConfigStruct{
 		AllowOrigins: []string{"*"},
+		JWTTimeout:   int64(time.Hour * 24 * 7),
 	}
 }
 
 // global configuration
 func Config() ConfigStruct {
 	var config ConfigStruct
-	if err := Read("config.json", &config); err != nil {
+	if err := Read("local_data", &config); err != nil {
 		panic(err)
 	}
 	return config

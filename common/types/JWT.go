@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/a3510377/control-panel-api/common/utils"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -16,16 +17,16 @@ type (
 		jwt.RegisteredClaims
 	}
 	RefreshToken struct {
-		Token          JWT       `json:"token"`
-		ExpirationTime time.Time `json:"expiration"`
+		Token          JWT  `json:"token"`
+		ExpirationTime Time `json:"expiration"`
 	}
 )
 
-func NewJWT(newTime time.Duration) (token *RefreshToken, status int) {
-	return Create(Claims{}, newTime)
+func NewJWT(userID ID) (token *RefreshToken, status int) {
+	return CreateJWT(Claims{ID: userID}, time.Duration(utils.Config().JWTTimeout))
 }
 
-func Create(claims Claims, newTime time.Duration) (token *RefreshToken, status int) {
+func CreateJWT(claims Claims, newTime time.Duration) (token *RefreshToken, status int) {
 	expirationTime := time.Now().Add(newTime)
 
 	claims.RegisteredClaims = jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(expirationTime)}
@@ -35,7 +36,7 @@ func Create(claims Claims, newTime time.Duration) (token *RefreshToken, status i
 		return nil, http.StatusInternalServerError
 	}
 
-	return &RefreshToken{JWT(tokenString), expirationTime}, http.StatusOK
+	return &RefreshToken{JWT(tokenString), NewTime(expirationTime)}, http.StatusOK
 }
 
 // JWT to string
@@ -67,7 +68,7 @@ func (j *JWT) Refresh(newTime time.Duration) (refreshToken *RefreshToken, status
 		return nil, status
 	}
 
-	token, status := Create(*claims, newTime)
+	token, status := CreateJWT(*claims, newTime)
 	if status != http.StatusOK {
 		return nil, status
 	}

@@ -10,8 +10,9 @@ import (
 
 type UserInfo struct {
 	BaseModel
-	Nickname    string     `json:"nickname"`
-	Permissions Permission `json:"permissions"`
+	Nickname    string       `json:"nickname"`
+	Permissions Permission   `json:"permissions"`
+	Token       RefreshToken `json:"token"`
 }
 
 // login user struct
@@ -43,10 +44,12 @@ func (d DB) CreateUser(user NewUser) (*UserInfo, error) {
 		return nil, err
 	}
 
+	token, _ := NewJWT(data.ID)
 	return &UserInfo{
 		BaseModel:   data.BaseModel,
 		Nickname:    data.Nickname,
 		Permissions: data.Permissions,
+		Token:       *token,
 	}, nil
 }
 
