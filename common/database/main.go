@@ -4,16 +4,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-type DB struct {
-	*gorm.DB
-	Validate *validator.Validate
-}
+type DB struct{ *gorm.DB }
 
 func NewDB(filename string) (*DB, error) {
 	db, err := gorm.Open(sqlite.Open(filename), &gorm.Config{
@@ -21,7 +17,7 @@ func NewDB(filename string) (*DB, error) {
 		NowFunc: func() time.Time { return time.Now().UTC() },
 	})
 
-	new_db := &DB{db, validator.New()}
+	new_db := &DB{db}
 
 	setupModel(new_db)
 

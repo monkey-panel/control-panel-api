@@ -25,6 +25,8 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 		var newUSer database.NewUser
 
 		if err := c.Bind(&newUSer); err != nil {
+			fmt.Println(common.TranslateError(err))
+
 			c.JSON(400, gin.H{
 				"code":    400,
 				"message": "Bad Request",

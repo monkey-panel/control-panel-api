@@ -26,6 +26,7 @@ func main() {
 	if len(os.Getenv("DEV")) > 0 {
 		mode = gin.DebugMode
 	}
+
 	gin.SetMode(mode)
 	gin.ForceConsoleColor()
 

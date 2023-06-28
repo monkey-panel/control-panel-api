@@ -5,6 +5,7 @@ import (
 
 	"github.com/a3510377/control-panel-api/common/codes"
 	. "github.com/a3510377/control-panel-api/common/types"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type UserInfo struct {
@@ -15,18 +16,18 @@ type UserInfo struct {
 
 // login user struct
 type LoginUser struct {
-	Username string `json:"username" form:"username" validate:"required,min=4,max=20" gorm:"uniqueIndex"`
-	Password string `json:"password" form:"password" validate:"required,min=4,max=20"`
+	Username string `json:"username" form:"username" binding:"required,min=4,max=20" gorm:"uniqueIndex"`
+	Password string `json:"password" form:"password" binding:"required,min=4,max=20"`
 }
 
 // create new user struct
 type NewUser struct {
 	LoginUser
-	Nickname string `json:"nickname" form:"nickname" validate:"max=32"`
+	Nickname string `json:"nickname" form:"nickname" binding:"max=32"`
 }
 
 func (d DB) CreateUser(user NewUser) (*UserInfo, error) {
-	if err := d.Validate.Struct(user); err != nil {
+	if err := binding.Validator.ValidateStruct(user); err != nil {
 		return nil, err
 	}
 

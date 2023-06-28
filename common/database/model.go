@@ -28,7 +28,7 @@ type DBUser struct {
 	BaseModel
 	LoginUser
 	ID          ID     `gorm:"primarykey;many2many:user_instance" json:"id"`
-	Nickname    string `json:"nickname" validate:"min=1,max=32"`
+	Nickname    string `json:"nickname" binding:"min=1,max=32"`
 	Permissions Permission
 }
 
