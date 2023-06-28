@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/a3510377/control-panel-api/common"
 	"github.com/a3510377/control-panel-api/common/codes"
@@ -25,21 +24,21 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 		var newUSer database.NewUser
 
 		if err := c.Bind(&newUSer); err != nil {
-			fmt.Println(common.TranslateError(err))
-
-			c.JSON(400, gin.H{
-				"code":    400,
-				"message": "Bad Request",
-			})
+			c.JSON(400, codes.Response[error](
+				codes.InvalidFormBody,
+				nil,
+				common.TranslateError(err),
+			))
 			return
 		}
 
-		_, err := db.CreateUser(newUSer)
+		user, err := db.CreateUser(newUSer)
 		if errors.Is(err, codes.UsernameAlreadyExists) {
-			c.JSON(400, codes.Response[*uint8](codes.UsernameAlreadyExists, nil))
+			c.JSON(400, codes.Response[error](codes.UsernameAlreadyExists, nil, nil))
 			return
 		}
-		fmt.Println(err)
+
+		c.JSON(200, codes.Response(codes.OK, user, nil))
 	})
 }
 

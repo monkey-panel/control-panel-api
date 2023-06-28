@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
@@ -36,23 +37,23 @@ func init() {
 
 	ZH_TW, _ = uni.GetTranslator("zh_Hant")
 
-	zh_tw_translations.RegisterDefaultTranslations(Validate, ZH_TW)
-
 	AddTranslations([]Translator{
-		{tag: "required", translation: "缺少 {0}"},
-		{tag: "max", translation: "{0} 長度不能超過 {1} 個字元"},
+		{tag: "required", translation: "{0} 是必須的"},
+		{tag: "max", translation: "{0} 長度必須是 {1} 或更短"},
 		{tag: "min", translation: "{0} 長度必須至少為 {1} 個字元"},
 	}, ZH_TW)
+
+	zh_tw_translations.RegisterDefaultTranslations(Validate, ZH_TW)
 }
 
-func TranslateError(err error) []string {
-	translated := []string{}
+func TranslateError(err error) map[string]string {
+	translated := map[string]string{}
 	if errs, ok := err.(validator.ValidationErrors); ok {
 		for _, e := range errs {
-			translated = append(translated, e.Translate(ZH_TW))
+			translated[strings.ToLower(e.Field())] = e.Translate(ZH_TW)
 		}
 	} else {
-		translated = append(translated, err.Error())
+		translated["error"] = err.Error()
 	}
 	return translated
 }
@@ -68,7 +69,7 @@ func AddTranslation(key, value string, trans ut.Translator, override bool) {
 		return ut.Add(key, value, override)
 	}, func(ut ut.Translator, fe validator.FieldError) (t string) {
 		t, _ = ut.T(key,
-			fe.Field(),                    // {0} Field
+			strings.ToLower(fe.Field()),   // {0} Field
 			fe.Param(),                    // {1} Param
 			fe.Tag(),                      // {2} Tag
 			fmt.Sprintf("%v", fe.Value()), // {3} Value
