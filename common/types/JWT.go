@@ -1,7 +1,6 @@
 package types
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/a3510377/control-panel-api/common/utils"
@@ -22,58 +21,50 @@ type (
 	}
 )
 
-func NewJWT(userID ID) (token *RefreshToken, status int) {
+func NewJWT(userID ID) (token *RefreshToken) {
 	return CreateJWT(Claims{ID: userID}, time.Duration(utils.Config().JWTTimeout))
 }
 
-func CreateJWT(claims Claims, newTime time.Duration) (token *RefreshToken, status int) {
+func CreateJWT(claims Claims, newTime time.Duration) (token *RefreshToken) {
 	expirationTime := time.Now().Add(newTime)
 
 	claims.RegisteredClaims = jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(expirationTime)}
 
 	tokenString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims).SignedString(jwtKey)
 	if err != nil {
-		return nil, http.StatusInternalServerError
+		return nil
 	}
 
-	return &RefreshToken{JWT(tokenString), NewTime(expirationTime)}, http.StatusOK
+	return &RefreshToken{JWT(tokenString), NewTime(expirationTime)}
 }
 
 // JWT to string
 func (j JWT) String() string { return string(j) }
 
-// state: `200` OK
-// state: `401` Unauthorized
-// data: token info
-func (j JWT) Info() (data *Claims, status int) {
+func (j JWT) Info() *Claims {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(j.String(), claims, func(token *jwt.Token) (any, error) {
 		return jwtKey, nil
 	})
 
-	// err == jwt.ErrSignatureInvalid ||
-	if token == nil || (token != nil && !token.Valid) {
-		return nil, http.StatusUnauthorized
-	} else if err != nil {
-		return nil, http.StatusUnauthorized
+	if token == nil || (token != nil && !token.Valid) || err != nil {
+		return nil
 	}
 
-	return claims, http.StatusOK
+	return claims
 }
 
 // Refresh Token
-func (j *JWT) Refresh(newTime time.Duration) (refreshToken *RefreshToken, status int) {
-	claims, status := j.Info()
-	if status != 200 {
-		return nil, status
+func (j *JWT) Refresh(newTime time.Duration) *RefreshToken {
+	claims := j.Info()
+	if claims == nil {
+		return nil
 	}
 
-	token, status := CreateJWT(*claims, newTime)
-	if status != http.StatusOK {
-		return nil, status
+	if token := CreateJWT(*claims, newTime); token != nil {
+		*j = JWT(token.Token)
+		return token
 	}
 
-	*j = JWT(token.Token)
-
-	return token, status
+	return nil
 }

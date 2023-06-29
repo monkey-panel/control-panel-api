@@ -2,6 +2,7 @@ package types
 
 import (
 	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -18,13 +19,20 @@ func NewTime(time time.Time) Time { return Time(time.UTC()) }
 func NowTime() Time               { return NewTime(time.Now()) }
 
 func (t *Time) UnmarshalJSON(data []byte) error {
-	now, err := time.Parse(StringTimeFormat, string(data))
-	*t = Time(now)
-	return err
+	if len(data) > 0 {
+		now, err := time.Parse(StringTimeFormat, string(data))
+		*t = Time(now)
+		return err
+	}
+
+	return nil
 }
 
 func (t Time) MarshalJSON() ([]byte, error) {
-	return []byte(`"` + t.String() + `"`), nil
+	if t.Time().IsZero() {
+		return json.Marshal("")
+	}
+	return json.Marshal(t.String())
 }
 
 func (t Time) Time() time.Time { return time.Time(t) }

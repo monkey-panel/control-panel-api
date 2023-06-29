@@ -27,9 +27,10 @@ func (i *BaseModel) BeforeCreate(tx *gorm.DB) (err error) {
 type DBUser struct {
 	BaseModel
 	LoginUser
-	ID          ID     `gorm:"primarykey;many2many:user_instance" json:"id"`
-	Nickname    string `json:"nickname" binding:"min=1,max=32"`
-	Permissions Permission
+	ID          ID         `gorm:"primarykey;many2many:user_instance" json:"id"`
+	Nickname    string     `json:"nickname" binding:"min=1,max=32"`
+	Lang        string     `json:"lang"`
+	Permissions Permission `json:"permissions"`
 }
 
 // database instance struct
@@ -57,3 +58,11 @@ type DBUserInstance struct {
 func (DBUser) TableName() string         { return "user" }
 func (DBInstance) TableName() string     { return "instance" }
 func (DBUserInstance) TableName() string { return "user_instance" }
+
+func (u DBUser) ToUserInfo() *UserInfo {
+	return &UserInfo{
+		BaseModel:   BaseModel{ID: u.ID, CreatedAt: u.CreatedAt},
+		Nickname:    u.Nickname,
+		Permissions: u.Permissions,
+	}
+}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
+	"github.com/go-playground/locales/zh"
 	"github.com/go-playground/locales/zh_Hant"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -33,29 +34,44 @@ func init() {
 
 	en := en.New()
 	zh_Hant := zh_Hant.New()
-	uni := ut.New(en, zh_Hant)
+	zh := zh.New()
+	uni := ut.New(en, zh_Hant, zh)
 
+	ZH, _ = uni.GetTranslator("zh")
 	ZH_TW, _ = uni.GetTranslator("zh_Hant")
 
 	AddTranslations([]Translator{
 		{tag: "required", translation: "{0} 是必須的"},
 		{tag: "max", translation: "{0} 長度必須是 {1} 或更短"},
 		{tag: "min", translation: "{0} 長度必須至少為 {1} 個字元"},
+		{tag: "alphanum", translation: "{0} 只能包含字母和數字"},
+		{tag: "lowercase", translation: "{0} 只能包含小寫字母"},
 	}, ZH_TW)
 
 	zh_tw_translations.RegisterDefaultTranslations(Validate, ZH_TW)
 }
 
-func TranslateError(err error) map[string]string {
-	translated := map[string]string{}
+func TranslateError(lang string, err error) map[string]string {
+	translated, lang_map := map[string]string{}, GetLangTranslator(lang)
 	if errs, ok := err.(validator.ValidationErrors); ok {
 		for _, e := range errs {
-			translated[strings.ToLower(e.Field())] = e.Translate(ZH_TW)
+			translated[strings.ToLower(e.Field())] = e.Translate(lang_map)
 		}
 	} else {
 		translated["error"] = err.Error()
 	}
 	return translated
+}
+
+func GetLangTranslator(lang string) ut.Translator {
+	switch strings.ToLower(lang) {
+	case "zh_tw":
+		return ZH_TW
+	case "zh":
+		return ZH
+	default:
+		return ZH_TW
+	}
 }
 
 func AddTranslations(translations []Translator, trans ut.Translator) {

@@ -3,9 +3,11 @@ package types
 import (
 	"database/sql/driver"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -106,4 +108,14 @@ func (f *ID) Scan(src any) error {
 // for sql
 func (f *ID) Value() (driver.Value, error) {
 	return f.Int64(), nil
+}
+
+func (f *ID) UnmarshalJSON(data []byte) error {
+	now, err := strconv.ParseInt(strings.Trim(string(data), `"`), 10, 64)
+	*f = ID(now)
+	return err
+}
+
+func (f ID) MarshalJSON() ([]byte, error) {
+	return json.Marshal(f.String())
 }
