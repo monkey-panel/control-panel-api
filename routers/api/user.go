@@ -22,7 +22,7 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 		var loginUser database.LoginUser
 
 		if err := c.Bind(&loginUser); err != nil {
-			c.JSON(400, codes.Response[error](
+			c.JSON(codes.Response[error](
 				codes.InvalidFormBody,
 				nil,
 				common.TranslateError("zh_tw", err),
@@ -32,18 +32,18 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 
 		user := db.GetUserFromName(loginUser.Username)
 		if user == nil {
-			c.JSON(400, codes.Response[error](codes.UnknownUser, nil, nil))
+			c.JSON(codes.Response[error](codes.UnknownUser, nil, nil))
 		}
 
 		user.AttachToken()
-		c.JSON(200, codes.Response(codes.OK, user, nil))
+		c.JSON(codes.Response(codes.OK, user, nil))
 	})
 
 	authRouter.POST("/register", func(c *gin.Context) {
 		var newUSer database.NewUser
 
 		if err := c.Bind(&newUSer); err != nil {
-			c.JSON(400, codes.Response[error](
+			c.JSON(codes.Response[error](
 				codes.InvalidFormBody,
 				nil,
 				common.TranslateError("zh_tw", err),
@@ -53,12 +53,12 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 
 		user, err := db.CreateUser(newUSer)
 		if errors.Is(err, codes.UsernameAlreadyExists) {
-			c.JSON(400, codes.Response[error](codes.UsernameAlreadyExists, nil, nil))
+			c.JSON(codes.Response[error](codes.UsernameAlreadyExists, nil, nil))
 			return
 		}
 
 		user.AttachToken()
-		c.JSON(200, codes.Response(codes.OK, user, nil))
+		c.JSON(codes.Response(codes.OK, user, nil))
 	})
 }
 
@@ -68,12 +68,12 @@ func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 	usersRouterOther := usersRouter.Group("/:id")
 
 	usersRouterMe.GET("/", func(c *gin.Context) {
-		c.JSON(200, codes.Response(codes.OK, GetUserFromContext(c), nil))
+		c.JSON(codes.Response(codes.OK, GetUserFromContext(c), nil))
 	})
 	usersRouterMe.PATCH("/", func(c *gin.Context) {
 		user := map[string]any{}
 		if err := c.ShouldBindJSON(&user); err != nil || len(user) == 0 {
-			c.JSON(400, codes.Response[error](
+			c.JSON(codes.Response[error](
 				codes.InvalidFormBody,
 				nil,
 				common.TranslateError("zh_tw", err),
@@ -85,10 +85,10 @@ func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 		currentUser := database.DBUser{ID: GetUserFromContext(c).ID}
 		db.Model(&currentUser).Clauses(clause.Returning{}).Omit("permissions").Updates(user)
 
-		c.JSON(200, codes.Response(codes.OK, currentUser, nil))
+		c.JSON(codes.Response(codes.OK, currentUser, nil))
 	})
 	usersRouterMe.GET("/instances", func(c *gin.Context) {
-		c.JSON(200, codes.Response(codes.OK, GetUserFromContext(c), nil))
+		c.JSON(codes.Response(codes.OK, GetUserFromContext(c), nil))
 	})
 	usersRouterMe.GET("/instances/:id/members")
 

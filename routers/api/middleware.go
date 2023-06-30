@@ -20,7 +20,7 @@ func AuthorizationMiddleware(c *gin.Context) {
 	}
 
 	if token == "" {
-		c.JSON(401, codes.Response[error](codes.UnknownToken, nil, nil))
+		c.JSON(codes.Response[error](codes.UnknownToken, nil, nil))
 		c.Abort()
 		return
 	}
@@ -30,7 +30,7 @@ func AuthorizationMiddleware(c *gin.Context) {
 		c.Set("user", user)
 		c.Next()
 	} else {
-		c.JSON(401, codes.Response[error](codes.UnknownToken, nil, nil))
+		c.JSON(codes.Response[error](codes.UnknownToken, nil, nil))
 		c.Abort()
 	}
 }

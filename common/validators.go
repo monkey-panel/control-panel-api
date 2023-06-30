@@ -12,7 +12,7 @@ func CheckAuthorization(c *gin.Context) {
 
 	token := c.GetHeader("Authorization")
 	if token == "" {
-		c.JSON(401, codes.Response[*uint8](codes.Unauthorized, nil, nil))
+		c.JSON(codes.Response[*uint8](codes.Unauthorized, nil, nil))
 		c.Abort()
 		return
 	}

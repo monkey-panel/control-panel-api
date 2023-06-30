@@ -66,18 +66,19 @@ func (c Code) Base() (d CodeData) {
 }
 func (c Code) Error() string { return c.Base().Message }
 
-func Response[D any](code Code, data D, errors map[string]string) ResponseData[D] {
+func Response[D any](code Code, data D, errors map[string]string) (int, ResponseData[D]) {
+	httpCode := int(code.Base().HttpCode)
 	if errors != nil {
-		return ResponseData[D]{
+		return httpCode, ResponseData[D]{
 			CodeData: code.Base(),
 			Data:     data,
 			Errors:   errors,
 		}
 	}
-	return ResponseData[D]{
+	return httpCode, ResponseData[D]{
 		CodeData: code.Base(),
 		Data:     data,
 	}
 }
 
-func ResponseOK[D any](data D) ResponseData[D] { return Response[D](OK, data, nil) }
+func ResponseOK[D any](data D) (int, ResponseData[D]) { return Response[D](OK, data, nil) }
