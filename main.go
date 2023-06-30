@@ -10,13 +10,15 @@ import (
 
 	"github.com/a3510377/control-panel-api/common"
 	"github.com/a3510377/control-panel-api/common/database"
+	"github.com/a3510377/control-panel-api/common/utils"
 	"github.com/a3510377/control-panel-api/routers"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	db, err := database.NewDB("db.db")
+	os.MkdirAll("data", os.ModePerm)
+	db, err := database.NewDB("data/db.db")
 	if err != nil {
 		panic(err)
 	}
@@ -27,6 +29,9 @@ func main() {
 		mode = gin.DebugMode
 	}
 
+	if !utils.HasFile("data/server.pem") || !utils.HasFile("data/server.key") {
+		utils.SummonCert()
+	}
 	gin.SetMode(mode)
 	gin.ForceConsoleColor()
 
@@ -35,14 +40,14 @@ func main() {
 	})
 
 	srv := &http.Server{
-		Addr:      "127.0.0.1:8000", // TODO: Add the address config
-		Handler:   app,
-		TLSConfig: nil, // TODO: Add the TLS config
+		Addr:    "127.0.0.1:8000", // TODO: Add the address config
+		Handler: app,
 	}
 
 	go func() {
 		log.Println("Server starting...")
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		err := srv.ListenAndServeTLS("data/server.pem", "data/server.key")
+		if err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()

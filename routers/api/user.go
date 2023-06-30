@@ -87,7 +87,9 @@ func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 
 		c.JSON(200, codes.Response(codes.OK, currentUser, nil))
 	})
-	usersRouterMe.GET("/instances")
+	usersRouterMe.GET("/instances", func(c *gin.Context) {
+		c.JSON(200, codes.Response(codes.OK, GetUserFromContext(c), nil))
+	})
 	usersRouterMe.GET("/instances/:id/members")
 
 	usersRouterOther.GET("/:id")

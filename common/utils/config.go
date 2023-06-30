@@ -24,7 +24,7 @@ func (c ConfigStruct) Default() any {
 // global configuration
 func Config() ConfigStruct {
 	var config ConfigStruct
-	if err := Read("local_data", &config); err != nil {
+	if err := Read("data/local_data", &config); err != nil {
 		panic(err)
 	}
 	return config
