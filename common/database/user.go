@@ -15,6 +15,7 @@ type UserInfo struct {
 	Nickname    string        `json:"nickname"`
 	Permissions Permission    `json:"permissions"`
 	Token       *RefreshToken `json:"token,omitempty"`
+	Lang        string        `json:"lang,omitempty"`
 }
 
 // login user struct

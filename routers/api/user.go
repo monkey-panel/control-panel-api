@@ -2,11 +2,12 @@ package api
 
 import (
 	"errors"
-	"strings"
+	"fmt"
 
 	"github.com/a3510377/control-panel-api/common"
 	"github.com/a3510377/control-panel-api/common/codes"
 	"github.com/a3510377/control-panel-api/common/database"
+	"gorm.io/gorm/clause"
 
 	"github.com/gin-gonic/gin"
 )
@@ -62,42 +63,26 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 	})
 }
 
-func GetCurrentUser(c *gin.Context) {
-	token := c.GetHeader("Authorization")
-	tokens := strings.Split(token, " ")
-	tokens_len := len(tokens)
-
-	if tokens_len > 2 {
-		token = ""
-	} else if tokens_len == 2 && tokens[0] == "Bearer" {
-		token = tokens[1]
-	}
-
-	if token == "" {
-		c.JSON(401, codes.Response[error](codes.UnknownToken, nil, nil))
-		c.Abort()
-		return
-	}
-
-	db := database.GetDBFromContext(c)
-	if user := db.GetUserFromToken(token); user != nil {
-		c.Set("user", user)
-		c.Next()
-	} else {
-		c.JSON(401, codes.Response[error](codes.UnknownToken, nil, nil))
-		c.Abort()
-	}
-}
-
 func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
-	usersRouter := app.Group("/users", GetCurrentUser)
+	usersRouter := app.Group("/users", AuthorizationMiddleware)
 	usersRouterMe := usersRouter.Group("/@me")
 	usersRouterOther := usersRouter.Group("/:id")
 
 	usersRouterMe.GET("/", func(c *gin.Context) {
-		c.JSON(200, codes.Response(codes.OK, c.MustGet("user").(*database.UserInfo), nil))
+		c.JSON(200, codes.Response(codes.OK, GetUserFromContext(c), nil))
 	})
-	usersRouterMe.PATCH("/")
+	usersRouterMe.PATCH("/", func(c *gin.Context) {
+		user := database.UserInfo{}
+		if err := c.BindJSON(&user); err != nil {
+			fmt.Println(err)
+		}
+
+		db := database.GetDBFromContext(c)
+		currentUser := database.DBUser{ID: GetUserFromContext(c).ID}
+		db.Model(&currentUser).Clauses(clause.Returning{}).Omit("permissions").Updates(user)
+
+		// c.JSON(200, codes.Response(codes.OK, currentUser, nil))
+	})
 	usersRouterMe.GET("/instances")
 	usersRouterMe.GET("/instances/:id/members")
 

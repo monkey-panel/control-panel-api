@@ -29,7 +29,7 @@ type DBUser struct {
 	LoginUser
 	ID          ID         `gorm:"primarykey;many2many:user_instance" json:"id"`
 	Nickname    string     `json:"nickname" binding:"min=1,max=32"`
-	Lang        string     `json:"lang"`
+	Lang        string     `json:"lang,omitempty"`
 	Permissions Permission `json:"permissions"`
 }
 
