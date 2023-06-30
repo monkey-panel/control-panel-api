@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/a3510377/control-panel-api/common"
 	"github.com/a3510377/control-panel-api/common/codes"
@@ -72,16 +71,21 @@ func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 		c.JSON(200, codes.Response(codes.OK, GetUserFromContext(c), nil))
 	})
 	usersRouterMe.PATCH("/", func(c *gin.Context) {
-		user := database.UserInfo{}
-		if err := c.BindJSON(&user); err != nil {
-			fmt.Println(err)
+		user := map[string]any{}
+		if err := c.ShouldBindJSON(&user); err != nil || len(user) == 0 {
+			c.JSON(400, codes.Response[error](
+				codes.InvalidFormBody,
+				nil,
+				common.TranslateError("zh_tw", err),
+			))
+			return
 		}
 
 		db := database.GetDBFromContext(c)
 		currentUser := database.DBUser{ID: GetUserFromContext(c).ID}
 		db.Model(&currentUser).Clauses(clause.Returning{}).Omit("permissions").Updates(user)
 
-		// c.JSON(200, codes.Response(codes.OK, currentUser, nil))
+		c.JSON(200, codes.Response(codes.OK, currentUser, nil))
 	})
 	usersRouterMe.GET("/instances")
 	usersRouterMe.GET("/instances/:id/members")

@@ -53,6 +53,9 @@ func init() {
 
 func TranslateError(lang string, err error) map[string]string {
 	translated, lang_map := map[string]string{}, GetLangTranslator(lang)
+	if err == nil {
+		return translated
+	}
 	if errs, ok := err.(validator.ValidationErrors); ok {
 		for _, e := range errs {
 			translated[strings.ToLower(e.Field())] = e.Translate(lang_map)

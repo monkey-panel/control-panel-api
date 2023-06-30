@@ -27,7 +27,7 @@ type LoginUser struct {
 // create new user struct
 type NewUser struct {
 	LoginUser
-	Nickname string `json:"nickname" form:"nickname" binding:"max=32"`
+	Nickname string `json:"nickname" form:"nickname" binding:"required,max=32"`
 }
 
 // in struct add token
