@@ -11,6 +11,8 @@ import (
 type ConfigStruct struct {
 	AllowOrigins []string `json:"allow_origins"`
 	JWTTimeout   int64    `json:"jwt_timeout"`
+	Address      string   `json:"address"`
+	EnableTLS    bool     `json:"enable_tls"`
 }
 
 // default configuration
@@ -18,6 +20,8 @@ func (c ConfigStruct) Default() any {
 	return ConfigStruct{
 		AllowOrigins: []string{"*"},
 		JWTTimeout:   int64(time.Hour * 24 * 7),
+		Address:      "0.0.0.0:8000",
+		EnableTLS:    true,
 	}
 }
 

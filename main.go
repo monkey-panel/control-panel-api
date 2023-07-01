@@ -18,6 +18,13 @@ import (
 
 func main() {
 	os.MkdirAll("data", os.ModePerm)
+
+	// generate cert
+	config := utils.Config()
+	if config.EnableTLS && (!utils.HasFile("data/server.pem") || !utils.HasFile("data/server.key")) {
+		utils.SummonCert()
+	}
+	// generate database
 	db, err := database.NewDB("data/db.db")
 	if err != nil {
 		panic(err)
@@ -29,19 +36,14 @@ func main() {
 		mode = gin.DebugMode
 	}
 
-	if !utils.HasFile("data/server.pem") || !utils.HasFile("data/server.key") {
-		utils.SummonCert()
-	}
 	gin.SetMode(mode)
 	gin.ForceConsoleColor()
 
-	app := routers.Routers(container, routers.RouterConfig{
-		AllowOrigins: []string{"http://localhost:8080"}, // TODO: Add the allow origins config
-	})
-
 	srv := &http.Server{
-		Addr:    "127.0.0.1:8000", // TODO: Add the address config
-		Handler: app,
+		Addr: config.Address,
+		Handler: routers.Routers(container, routers.RouterConfig{
+			AllowOrigins: config.AllowOrigins,
+		}),
 	}
 
 	go func() {

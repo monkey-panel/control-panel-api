@@ -80,5 +80,3 @@ func Response[D any](code Code, data D, errors map[string]string) (int, Response
 		Data:     data,
 	}
 }
-
-func ResponseOK[D any](data D) (int, ResponseData[D]) { return Response[D](OK, data, nil) }
