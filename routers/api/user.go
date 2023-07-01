@@ -6,6 +6,7 @@ import (
 	"github.com/a3510377/control-panel-api/common"
 	"github.com/a3510377/control-panel-api/common/codes"
 	"github.com/a3510377/control-panel-api/common/database"
+	"github.com/a3510377/control-panel-api/common/utils"
 	"gorm.io/gorm/clause"
 
 	"github.com/gin-gonic/gin"
@@ -33,10 +34,15 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 		user := db.GetUserFromName(loginUser.Username)
 		if user == nil {
 			c.JSON(codes.Response[error](codes.UnknownUser, nil, nil))
+			return
 		}
-
-		user.AttachToken()
-		c.JSON(codes.Response(codes.OK, user, nil))
+		if utils.BcryptCheck(loginUser.Password, user.Password) {
+			user_info := user.ToUserInfo()
+			user_info.AttachToken()
+			c.JSON(codes.Response(codes.OK, user_info, nil))
+		} else {
+			c.JSON(codes.Response[error](codes.InvalidPassword, nil, nil))
+		}
 	})
 
 	authRouter.POST("/register", func(c *gin.Context) {
@@ -85,15 +91,12 @@ func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 		currentUser := database.DBUser{ID: GetUserFromContext(c).ID}
 		db.Model(&currentUser).Clauses(clause.Returning{}).Omit("permissions").Updates(user)
 
-		c.JSON(codes.Response(codes.OK, currentUser, nil))
+		c.JSON(codes.Response(codes.OK, currentUser.ToUserInfo(), nil))
 	})
 	usersRouterMe.GET("/instances", func(c *gin.Context) {
 		c.JSON(codes.Response(codes.OK, GetUserFromContext(c), nil))
 	})
-	usersRouterMe.GET("/instances/:id/members")
 
 	usersRouterOther.GET("/:id")
 	usersRouterOther.PATCH("/:id")
-	usersRouterOther.GET("/:id/instances")
-	usersRouterOther.GET("/:id/instances/:id/members")
 }

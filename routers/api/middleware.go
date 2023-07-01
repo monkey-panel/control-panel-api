@@ -27,7 +27,7 @@ func AuthorizationMiddleware(c *gin.Context) {
 
 	db := database.GetDBFromContext(c)
 	if user := db.GetUserFromToken(token); user != nil {
-		c.Set("user", user)
+		c.Set("user", user.ToUserInfo())
 		c.Next()
 	} else {
 		c.JSON(codes.Response[error](codes.UnknownToken, nil, nil))

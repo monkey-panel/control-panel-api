@@ -6,6 +6,7 @@ import (
 
 	"github.com/a3510377/control-panel-api/common/codes"
 	. "github.com/a3510377/control-panel-api/common/types"
+	"github.com/a3510377/control-panel-api/common/utils"
 	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm"
 )
@@ -34,27 +35,27 @@ type NewUser struct {
 func (u *UserInfo) AttachToken() { u.Token = NewJWT(u.ID) }
 
 // get user from name
-func (d DB) GetUserFromName(name string) *UserInfo {
+func (d DB) GetUserFromName(name string) *DBUser {
 	user := &DBUser{}
 	err := d.Where("username = ?", name).First(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil
 	}
-	return user.ToUserInfo()
+	return user
 }
 
 // get user from id
-func (d DB) GetUserFromID(id ID) *UserInfo {
+func (d DB) GetUserFromID(id ID) *DBUser {
 	user := &DBUser{}
 	err := d.First(&user, id).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil
 	}
-	return user.ToUserInfo()
+	return user
 }
 
 // get user from token
-func (d DB) GetUserFromToken(token string) *UserInfo {
+func (d DB) GetUserFromToken(token string) *DBUser {
 	if claims := JWT(token).Info(); claims != nil {
 		return d.GetUserFromID(claims.ID)
 	}
@@ -68,6 +69,7 @@ func (d DB) CreateUser(user NewUser) (*UserInfo, error) {
 		return nil, err
 	}
 
+	user.Password = utils.BcryptHash(user.Password)
 	data := DBUser{
 		LoginUser: user.LoginUser,
 		Nickname:  user.Nickname,

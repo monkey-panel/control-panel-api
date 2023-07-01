@@ -54,7 +54,7 @@ func corsConfig(router_config RouterConfig) cors.Config {
 	} else {
 		config.AllowMethods = []string{"GET", "POST", "DELETE", "OPTIONS", "PUT"}
 		config.AllowHeaders = []string{
-			"Authorization", "Content-Type", "Origin",
+			"Authorization", "Content-Type", "Origin", "Content-Length",
 			"Connection", "Accept-Encoding", "Accept-Language", "Host",
 		}
 		config.AllowOrigins = router_config.AllowOrigins

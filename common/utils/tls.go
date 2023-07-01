@@ -32,7 +32,7 @@ func SummonCert() {
 		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth, x509.ExtKeyUsageServerAuth},
 		KeyUsage:              x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign,
 	}
-	caKey, _ := rsa.GenerateKey(rand.Reader, 1024)
+	caKey, _ := rsa.GenerateKey(rand.Reader, 2048)
 	cert := &x509.Certificate{
 		SerialNumber: big.NewInt(1658),
 		Subject: pkix.Name{
@@ -48,7 +48,7 @@ func SummonCert() {
 	cert.DNSNames = append(cert.DNSNames, "127.0.0.1")
 	cert.IPAddresses = append(cert.IPAddresses, net.ParseIP("0.0.0.0"))
 
-	priv, _ := rsa.GenerateKey(rand.Reader, 1024)
+	priv, _ := rsa.GenerateKey(rand.Reader, 2048)
 
 	pub := &priv.PublicKey
 	privPm := priv
