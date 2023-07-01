@@ -23,6 +23,7 @@ func (c ConfigStruct) Default() any {
 		JWTTimeout:   int64(time.Hour * 24 * 7),
 		Address:      "0.0.0.0:8000",
 		EnableTLS:    true,
+		JWTKey:       RandomString(64),
 	}
 }
 

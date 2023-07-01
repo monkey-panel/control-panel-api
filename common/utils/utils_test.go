@@ -4,5 +4,5 @@ import "testing"
 
 func TestRandStringBytes(t *testing.T) {
 	t.Parallel()
-	t.Log(RandString(64))
+	t.Log(RandomString(64))
 }
