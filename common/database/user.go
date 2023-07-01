@@ -82,10 +82,5 @@ func (d DB) CreateUser(user NewUser) (*UserInfo, error) {
 		return nil, err
 	}
 
-	user_info := &UserInfo{
-		BaseModel:   data.BaseModel,
-		Nickname:    data.Nickname,
-		Permissions: data.Permissions,
-	}
-	return user_info, nil
+	return data.ToUserInfo(), nil
 }

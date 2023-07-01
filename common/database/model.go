@@ -61,8 +61,9 @@ func (DBUserInstance) TableName() string { return "user_instance" }
 
 func (u DBUser) ToUserInfo() *UserInfo {
 	return &UserInfo{
-		BaseModel:   BaseModel{ID: u.ID, CreatedAt: u.CreatedAt},
+		BaseModel:   u.BaseModel,
 		Nickname:    u.Nickname,
 		Permissions: u.Permissions,
+		Lang:        u.Lang,
 	}
 }
