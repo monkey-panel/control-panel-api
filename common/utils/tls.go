@@ -68,12 +68,10 @@ func SummonCert() {
 	ca_b64 := pem.EncodeToMemory(certificate)
 	AutoWriteFile("data/server.pem", ca_b64, fs.ModePerm)
 
-	priv_b := x509.MarshalPKCS1PrivateKey(priv)
-	AutoWriteFile("data/server.key", priv_b, fs.ModePerm)
 	privateKey := &pem.Block{
 		Type:    "PRIVATE KEY",
 		Headers: map[string]string{},
-		Bytes:   priv_b,
+		Bytes:   x509.MarshalPKCS1PrivateKey(priv),
 	}
 	priv_b64 := pem.EncodeToMemory(privateKey)
 	AutoWriteFile("data/server.key", priv_b64, fs.ModePerm)

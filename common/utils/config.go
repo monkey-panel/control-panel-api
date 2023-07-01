@@ -13,6 +13,7 @@ type ConfigStruct struct {
 	JWTTimeout   int64    `json:"jwt_timeout"`
 	Address      string   `json:"address"`
 	EnableTLS    bool     `json:"enable_tls"`
+	JWTKey       string   `json:"jwt_key"`
 }
 
 // default configuration

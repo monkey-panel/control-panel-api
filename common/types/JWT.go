@@ -4,10 +4,8 @@ import (
 	"time"
 
 	"github.com/a3510377/control-panel-api/common/utils"
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 )
-
-var jwtKey = []byte("test")
 
 type (
 	JWT    string
@@ -30,7 +28,7 @@ func CreateJWT(claims Claims, newTime time.Duration) (token *RefreshToken) {
 
 	claims.RegisteredClaims = jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(expirationTime)}
 
-	tokenString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims).SignedString(jwtKey)
+	tokenString, err := jwt.NewWithClaims(jwt.SigningMethodRS256, &claims).SignedString(utils.Config().JWTKey)
 	if err != nil {
 		return nil
 	}
@@ -44,7 +42,7 @@ func (j JWT) String() string { return string(j) }
 func (j JWT) Info() *Claims {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(j.String(), claims, func(token *jwt.Token) (any, error) {
-		return jwtKey, nil
+		return utils.Config().JWTKey, nil
 	})
 
 	if token == nil || (token != nil && !token.Valid) || err != nil {
