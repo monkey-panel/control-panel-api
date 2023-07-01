@@ -22,7 +22,9 @@ func main() {
 	// generate cert
 	config := utils.Config()
 	if config.EnableTLS && (!utils.HasFile("data/server.pem") || !utils.HasFile("data/server.key")) {
-		utils.SummonCert()
+		ssl := utils.GenerateCertificate(utils.GenerateCACertificate())
+		utils.AutoWriteFile("data/server.pem", ssl.ServerKey, os.ModePerm)
+		utils.AutoWriteFile("data/server.key", ssl.ServerPem, os.ModePerm)
 	}
 	// generate database
 	db, err := database.NewDB("data/db.db")
