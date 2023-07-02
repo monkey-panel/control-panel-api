@@ -9,7 +9,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.14.1
 	github.com/golang-jwt/jwt/v5 v5.0.0
-	github.com/monkey-panel/control-panel-utils v0.1.1
+	github.com/monkey-panel/control-panel-utils v0.1.2
 	golang.org/x/crypto v0.10.0
 	gorm.io/driver/sqlite v1.5.2
 	gorm.io/gorm v1.25.2

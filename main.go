@@ -10,6 +10,7 @@ import (
 
 	"github.com/monkey-panel/control-panel-api/common"
 	"github.com/monkey-panel/control-panel-api/common/database"
+	api_utils "github.com/monkey-panel/control-panel-api/common/utils"
 	"github.com/monkey-panel/control-panel-api/routers"
 	"github.com/monkey-panel/control-panel-utils/utils"
 
@@ -20,7 +21,7 @@ func main() {
 	os.MkdirAll("data", os.ModePerm)
 
 	// generate cert
-	config := utils.Config()
+	config := api_utils.Config()
 	if config.EnableTLS && (!utils.HasFile("data/server.pem") || !utils.HasFile("data/server.key")) {
 		ca, privateKey := utils.GenerateCACertificate()
 		ssl := utils.GenerateCertificate(ca, privateKey, []string{"console-panel-api"})
@@ -51,7 +52,13 @@ func main() {
 
 	go func() {
 		log.Println("Server starting...")
-		err := srv.ListenAndServeTLS("data/server.pem", "data/server.key")
+		var err error
+
+		if config.EnableTLS {
+			err = srv.ListenAndServeTLS("data/server.pem", "data/server.key")
+		} else {
+			err = srv.ListenAndServe()
+		}
 		if err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
 		}
