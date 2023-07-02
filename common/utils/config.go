@@ -1,8 +1,6 @@
 package utils
 
-import (
-	"reflect"
-)
+import "reflect"
 
 const globalConfigPath = "data/local_data"
 
