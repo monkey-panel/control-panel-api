@@ -1,5 +1,7 @@
 package types
 
+import . "github.com/monkey-panel/control-panel-utils/types"
+
 // - [U] User
 // - [I] Instance
 // - [S] System

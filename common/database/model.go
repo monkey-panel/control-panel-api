@@ -1,14 +1,15 @@
 package database
 
 import (
-	. "github.com/a3510377/control-panel-api/common/types"
+	. "github.com/monkey-panel/control-panel-api/common/types"
+	. "github.com/monkey-panel/control-panel-utils/types"
 
 	"gorm.io/gorm"
 )
 
 // set up models
 func setupModel(db *DB) {
-	db.AutoMigrate(&DBUser{}, &DBInstance{}, &DBUserInstance{})
+	db.AutoMigrate(&DBUser{})
 }
 
 // database base model struct
@@ -33,31 +34,8 @@ type DBUser struct {
 	Permissions Permission `json:"permissions"`
 }
 
-// database instance struct
-type DBInstance struct {
-	BaseModel
-	Name             string `gorm:"not null"`
-	Description      string
-	AdminDescription string
-	AutoStart        bool
-	Mark             InstanceMark
-	LastAt           Time
-	EndAt            Time
-}
-
-// many to many relationship between user and instance
-type DBUserInstance struct {
-	InstanceID ID
-	UserID     ID
-
-	Permissions Permission
-	Nickname    string
-}
-
 /* set up table name */
-func (DBUser) TableName() string         { return "user" }
-func (DBInstance) TableName() string     { return "instance" }
-func (DBUserInstance) TableName() string { return "user_instance" }
+func (DBUser) TableName() string { return "user" }
 
 func (u DBUser) ToUserInfo() *UserInfo {
 	return &UserInfo{

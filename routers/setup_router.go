@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/a3510377/control-panel-api/common"
-	"github.com/a3510377/control-panel-api/routers/api"
+	"github.com/monkey-panel/control-panel-api/common"
+	"github.com/monkey-panel/control-panel-api/routers/api"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
