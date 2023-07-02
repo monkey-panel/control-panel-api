@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"reflect"
 )
 
@@ -74,11 +73,9 @@ func toMap(data any) map[string]any {
 // merge two object
 func mergeObj(old, new map[string]any) map[string]any {
 	for k, value := range new {
-		fmt.Println(k, value)
 		if oldValue, ok := old[k]; ok {
 			oldValueType := reflect.TypeOf(oldValue).Kind()
 			valueType := reflect.TypeOf(value).Kind()
-			fmt.Println(oldValueType, valueType)
 			if valueType == reflect.Map && oldValueType == reflect.Map {
 				// if is dict
 				old[k] = mergeObj(oldValue.(map[string]any), value.(map[string]any))
