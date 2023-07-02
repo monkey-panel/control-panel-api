@@ -7,7 +7,7 @@ import (
 
 func TestConfig(t *testing.T) {
 	var config ConfigStruct
-	if err := Read("./_test.json", &config); err != nil {
+	if err := ConfigRead("./_test.json", &config); err != nil {
 		t.Fatal(err)
 	}
 }

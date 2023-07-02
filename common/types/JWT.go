@@ -20,7 +20,7 @@ type (
 )
 
 func NewJWT(userID ID) (token *RefreshToken) {
-	return CreateJWT(Claims{ID: userID}, time.Duration(utils.Config().JWTTimeout))
+	return CreateJWT(Claims{ID: userID}, time.Duration(int64(time.Hour)*utils.Config().JWTTimeout))
 }
 
 func CreateJWT(claims Claims, newTime time.Duration) (token *RefreshToken) {
@@ -28,7 +28,7 @@ func CreateJWT(claims Claims, newTime time.Duration) (token *RefreshToken) {
 
 	claims.RegisteredClaims = jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(expirationTime)}
 
-	tokenString, err := jwt.NewWithClaims(jwt.SigningMethodRS256, &claims).SignedString(utils.Config().JWTKey)
+	tokenString, err := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims).SignedString([]byte(utils.Config().JWTKey))
 	if err != nil {
 		return nil
 	}
@@ -42,7 +42,7 @@ func (j JWT) String() string { return string(j) }
 func (j JWT) Info() *Claims {
 	claims := &Claims{}
 	token, err := jwt.ParseWithClaims(j.String(), claims, func(token *jwt.Token) (any, error) {
-		return utils.Config().JWTKey, nil
+		return []byte(utils.Config().JWTKey), nil
 	})
 
 	if token == nil || (token != nil && !token.Valid) || err != nil {
