@@ -6,8 +6,8 @@ import (
 
 	"github.com/monkey-panel/control-panel-api/common/codes"
 	. "github.com/monkey-panel/control-panel-api/common/types"
+	"github.com/monkey-panel/control-panel-api/common/utils"
 	. "github.com/monkey-panel/control-panel-utils/types"
-	"github.com/monkey-panel/control-panel-utils/utils"
 
 	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm"

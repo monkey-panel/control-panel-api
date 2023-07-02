@@ -3,6 +3,7 @@ package types
 import (
 	"time"
 
+	. "github.com/monkey-panel/control-panel-utils/types"
 	"github.com/monkey-panel/control-panel-utils/utils"
 
 	"github.com/golang-jwt/jwt/v5"

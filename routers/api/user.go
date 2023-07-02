@@ -6,7 +6,7 @@ import (
 	"github.com/monkey-panel/control-panel-api/common"
 	"github.com/monkey-panel/control-panel-api/common/codes"
 	"github.com/monkey-panel/control-panel-api/common/database"
-	"github.com/monkey-panel/control-panel-utils/utils"
+	"github.com/monkey-panel/control-panel-api/common/utils"
 	"gorm.io/gorm/clause"
 
 	"github.com/gin-gonic/gin"
