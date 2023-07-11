@@ -20,7 +20,7 @@ func main() {
 	os.MkdirAll("data", os.ModePerm)
 
 	// generate cert
-	config := api_utils.Config()
+	config := utils.Config()
 	if config.EnableTLS && (!utils.HasFile("data/server.pem") || !utils.HasFile("data/server.key")) {
 		ca, privateKey := utils.GenerateCACertificate()
 		ssl := utils.GenerateCertificate(ca, privateKey, []string{"console-panel-api"})

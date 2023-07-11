@@ -2,43 +2,12 @@ package utils
 
 import "reflect"
 
-const globalConfigPath = "data/local_data"
-
-var globalConfig *ConfigStruct
-
-// global configuration struct
-type ConfigStruct struct {
-	AllowOrigins []string `json:"allow_origins"`
-	JWTTimeout   int64    `json:"jwt_timeout"` // hours
-	Address      string   `json:"address"`
-	EnableTLS    bool     `json:"enable_tls"`
-	JWTKey       string   `json:"jwt_key"`
-}
-
-// default configuration
-func (c ConfigStruct) Default() any {
-	return ConfigStruct{
-		AllowOrigins: []string{"*"},
-		JWTTimeout:   24 * 14, // 14day
-		Address:      "0.0.0.0:8000",
-		EnableTLS:    true,
-		JWTKey:       RandomString(64),
-	}
-}
-
+// config interface
 type BaseConfig interface {
 	Default() any
 }
 
-// global configuration
-func Config() ConfigStruct {
-	if globalConfig == nil {
-		globalConfig = &ConfigStruct{}
-		ConfigRead(globalConfigPath, globalConfig)
-	}
-	return *globalConfig
-}
-
+// read config
 func ConfigRead(path string, config BaseConfig) error {
 	data := map[string]any{}
 	ReadJsonFile(globalConfigPath, &data)
@@ -52,6 +21,7 @@ func ConfigRead(path string, config BaseConfig) error {
 	return nil
 }
 
+// convert struct to map
 func toMap(data any) map[string]any {
 	result := map[string]any{}
 	v := reflect.ValueOf(data)
@@ -94,6 +64,7 @@ func mergeObj(old, new map[string]any) map[string]any {
 	return old
 }
 
+// check is number
 func isNumber(kind reflect.Kind) bool {
 	switch kind {
 	case
