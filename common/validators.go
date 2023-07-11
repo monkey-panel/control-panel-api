@@ -1,8 +1,8 @@
 package common
 
 import (
-	"github.com/monkey-panel/control-panel-api/common/codes"
-	"github.com/monkey-panel/control-panel-api/common/database"
+	"github.com/a3510377/control-panel-api/common/codes"
+	"github.com/a3510377/control-panel-api/common/database"
 
 	"github.com/gin-gonic/gin"
 )

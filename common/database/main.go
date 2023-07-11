@@ -3,11 +3,10 @@ package database
 import (
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-
-	"github.com/gin-gonic/gin"
 )
 
 type DB struct{ *gorm.DB }
