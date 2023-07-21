@@ -3,9 +3,9 @@ package api
 import (
 	"strings"
 
-	"github.com/a3510377/control-panel-api/common/codes"
-	"github.com/a3510377/control-panel-api/common/database"
 	"github.com/gin-gonic/gin"
+	"github.com/monkey-panel/control-panel-api/common/codes"
+	"github.com/monkey-panel/control-panel-api/common/database"
 )
 
 func AuthorizationMiddleware(c *gin.Context) {

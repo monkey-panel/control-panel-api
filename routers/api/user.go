@@ -3,10 +3,10 @@ package api
 import (
 	"errors"
 
-	"github.com/a3510377/control-panel-api/common"
-	"github.com/a3510377/control-panel-api/common/codes"
-	"github.com/a3510377/control-panel-api/common/database"
-	"github.com/a3510377/control-panel-api/common/utils"
+	"github.com/monkey-panel/control-panel-api/common"
+	"github.com/monkey-panel/control-panel-api/common/codes"
+	"github.com/monkey-panel/control-panel-api/common/database"
+	"github.com/monkey-panel/control-panel-api/common/utils"
 	"gorm.io/gorm/clause"
 
 	"github.com/gin-gonic/gin"

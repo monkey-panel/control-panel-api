@@ -1,4 +1,4 @@
-module github.com/a3510377/control-panel-api
+module github.com/monkey-panel/control-panel-api
 
 go 1.20
 
@@ -20,6 +20,10 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
+	github.com/gookit/color v1.5.3 // indirect
+	github.com/gookit/goutil v0.6.10 // indirect
+	github.com/gookit/gsr v0.0.8 // indirect
+	github.com/gookit/slog v0.5.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -32,8 +36,11 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/net v0.11.0 // indirect
+	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/text v0.10.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect

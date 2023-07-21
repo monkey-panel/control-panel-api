@@ -8,10 +8,10 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/a3510377/control-panel-api/common"
-	"github.com/a3510377/control-panel-api/common/database"
-	"github.com/a3510377/control-panel-api/common/utils"
-	"github.com/a3510377/control-panel-api/routers"
+	"github.com/monkey-panel/control-panel-api/common"
+	"github.com/monkey-panel/control-panel-api/common/database"
+	"github.com/monkey-panel/control-panel-api/common/utils"
+	"github.com/monkey-panel/control-panel-api/routers"
 
 	"github.com/gin-gonic/gin"
 )

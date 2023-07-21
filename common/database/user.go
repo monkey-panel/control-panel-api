@@ -4,10 +4,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/a3510377/control-panel-api/common/codes"
-	. "github.com/a3510377/control-panel-api/common/types"
-	"github.com/a3510377/control-panel-api/common/utils"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/monkey-panel/control-panel-api/common/codes"
+	. "github.com/monkey-panel/control-panel-api/common/types"
+	"github.com/monkey-panel/control-panel-api/common/utils"
 	"gorm.io/gorm"
 )
 
