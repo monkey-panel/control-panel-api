@@ -19,13 +19,14 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 	db, authRouter := container.DB, app.Group("/auth")
 
 	authRouter.POST("/login", func(c *gin.Context) {
+		currentUser := GetUserFromContext(c)
 		var loginUser database.LoginUser
 
 		if err := c.Bind(&loginUser); err != nil {
 			c.JSON(codes.Response[error](
 				codes.InvalidFormBody,
 				nil,
-				common.TranslateError("zh_tw", err),
+				common.TranslateError(currentUser.Lang, err),
 			))
 			return
 		}
@@ -45,13 +46,14 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 	})
 
 	authRouter.POST("/register", func(c *gin.Context) {
+		currentUser := GetUserFromContext(c)
 		var newUSer database.NewUser
 
 		if err := c.Bind(&newUSer); err != nil {
 			c.JSON(codes.Response[error](
 				codes.InvalidFormBody,
 				nil,
-				common.TranslateError("zh_tw", err),
+				common.TranslateError(currentUser.Lang, err),
 			))
 			return
 		}
@@ -76,29 +78,30 @@ func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 		c.JSON(codes.Response(codes.OK, GetUserFromContext(c), nil))
 	})
 	usersRouterMe.PATCH("/", func(c *gin.Context) {
-		user := database.EditUser{}
-		if err := c.ShouldBindJSON(&user); err != nil {
+		currentUser := GetUserFromContext(c)
+		userEdit := database.EditUser{}
+		if err := c.ShouldBindJSON(&userEdit); err != nil {
 			c.JSON(codes.Response[error](
 				codes.InvalidFormBody,
 				nil,
-				common.TranslateError("zh_tw", err),
+				common.TranslateError(currentUser.Lang, err),
 			))
 			return
 		}
 
 		db := database.GetDBFromContext(c)
-		currentUser := database.DBUser{ID: GetUserFromContext(c).ID}
-		if d := db.Model(&currentUser).Omit("permissions").Updates(user); d.Error != nil {
+		user := database.DBUser{ID: GetUserFromContext(c).ID}
+		if d := db.Model(&user).Omit("permissions").Updates(userEdit); d.Error != nil {
 			c.JSON(codes.Response[error](
 				codes.UnknownUser,
 				nil,
-				common.TranslateError("zh_tw", d.Error),
+				common.TranslateError(currentUser.Lang, d.Error),
 			))
 			return
 		}
-		currentUser = *db.GetUserFromID(currentUser.ID)
+		user = *db.GetUserFromID(user.ID)
 
-		c.JSON(codes.Response(codes.OK, currentUser.ToUserInfo(), nil))
+		c.JSON(codes.Response(codes.OK, user.ToUserInfo(), nil))
 	})
 	usersRouterMe.GET("/instances", func(c *gin.Context) {
 		c.JSON(codes.Response(codes.OK, GetUserFromContext(c), nil))
