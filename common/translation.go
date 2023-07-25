@@ -11,13 +11,22 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	zh_tw_translations "github.com/go-playground/validator/v10/translations/zh_tw"
+	"github.com/monkey-panel/control-panel-api/common/utils"
 )
 
 var Validate *validator.Validate
 var (
+	EN    ut.Translator
 	ZH    ut.Translator
 	ZH_TW ut.Translator
 )
+
+// LangMap key is lowercase
+var LangMap = map[string]ut.Translator{
+	"en":    EN,
+	"zh":    ZH,
+	"zh_tw": ZH_TW,
+}
 
 type Translator struct {
 	tag         string
@@ -37,6 +46,7 @@ func init() {
 	zh := zh.New()
 	uni := ut.New(en, zh_Hant, zh)
 
+	EN, _ = uni.GetTranslator("zh")
 	ZH, _ = uni.GetTranslator("zh")
 	ZH_TW, _ = uni.GetTranslator("zh_Hant")
 
@@ -67,14 +77,15 @@ func TranslateError(lang string, err error) map[string]string {
 }
 
 func GetLangTranslator(lang string) ut.Translator {
-	switch strings.ToLower(lang) {
-	case "zh_tw":
-		return ZH_TW
-	case "zh":
-		return ZH
-	default:
-		return ZH_TW
+	if lang, ok := LangMap[strings.ToLower(lang)]; ok {
+		return lang
 	}
+
+	if lang, ok := LangMap[strings.ToLower(utils.Config().DefaultLang)]; ok {
+		return lang
+	}
+
+	return EN
 }
 
 func AddTranslations(translations []Translator, trans ut.Translator) {

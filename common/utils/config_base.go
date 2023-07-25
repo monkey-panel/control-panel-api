@@ -11,6 +11,7 @@ type ConfigStruct struct {
 	Address      string   `json:"address"`
 	EnableTLS    bool     `json:"enable_tls"`
 	JWTKey       string   `json:"jwt_key"`
+	DefaultLang  string   `json:"default_lang"`
 }
 
 // default configuration
