@@ -7,7 +7,6 @@ import (
 	"github.com/monkey-panel/control-panel-api/common/codes"
 	"github.com/monkey-panel/control-panel-api/common/database"
 	"github.com/monkey-panel/control-panel-api/common/utils"
-	"gorm.io/gorm/clause"
 
 	"github.com/gin-gonic/gin"
 )
@@ -77,8 +76,8 @@ func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 		c.JSON(codes.Response(codes.OK, GetUserFromContext(c), nil))
 	})
 	usersRouterMe.PATCH("/", func(c *gin.Context) {
-		user := map[string]any{}
-		if err := c.ShouldBindJSON(&user); err != nil || len(user) == 0 {
+		user := database.EditUser{}
+		if err := c.ShouldBindJSON(&user); err != nil {
 			c.JSON(codes.Response[error](
 				codes.InvalidFormBody,
 				nil,
@@ -89,7 +88,15 @@ func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
 
 		db := database.GetDBFromContext(c)
 		currentUser := database.DBUser{ID: GetUserFromContext(c).ID}
-		db.Model(&currentUser).Clauses(clause.Returning{}).Omit("permissions").Updates(user)
+		if d := db.Model(&currentUser).Omit("permissions").Updates(user); d.Error != nil {
+			c.JSON(codes.Response[error](
+				codes.UnknownUser,
+				nil,
+				common.TranslateError("zh_tw", d.Error),
+			))
+			return
+		}
+		currentUser = *db.GetUserFromID(currentUser.ID)
 
 		c.JSON(codes.Response(codes.OK, currentUser.ToUserInfo(), nil))
 	})

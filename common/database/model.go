@@ -27,10 +27,9 @@ func (i *BaseModel) BeforeCreate(tx *gorm.DB) (err error) {
 type DBUser struct {
 	BaseModel
 	LoginUser
-	ID          ID         `gorm:"primarykey;many2many:user_instance" json:"id"`
-	Nickname    string     `json:"nickname" binding:"min=1,max=32"`
-	Lang        string     `json:"lang,omitempty"`
-	Permissions Permission `json:"permissions"`
+	EditUser
+
+	ID ID `gorm:"primarykey;many2many:user_instance" json:"id"`
 }
 
 // database instance struct

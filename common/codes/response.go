@@ -43,7 +43,7 @@ var codesMap = map[Code]CodeData{
 
 	/* error code */
 	UnknownAccount:  {400, nil, "Unknown Account"},
-	UnknownToken:    {400, nil, "Unknown Token"},
+	UnknownToken:    {403, nil, "Unknown Token"},
 	UnknownUser:     {400, nil, "Unknown User"},
 	UnknownInstance: {400, nil, "Unknown Instance"},
 

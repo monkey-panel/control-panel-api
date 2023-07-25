@@ -25,6 +25,13 @@ type LoginUser struct {
 	Password string `json:"password" form:"password" binding:"required,min=4,max=20"`
 }
 
+// edit user struct
+type EditUser struct {
+	Nickname    string     `json:"nickname" binding:"max=32"`
+	Lang        string     `json:"lang,omitempty"`
+	Permissions Permission `json:"permissions"`
+}
+
 // create new user struct
 type NewUser struct {
 	LoginUser
@@ -72,7 +79,7 @@ func (d DB) CreateUser(user NewUser) (*UserInfo, error) {
 	user.Password = utils.BcryptHash(user.Password)
 	data := DBUser{
 		LoginUser: user.LoginUser,
-		Nickname:  user.Nickname,
+		EditUser:  EditUser{Nickname: user.Nickname},
 	}
 
 	if err := d.Create(&data).Error; err != nil {
