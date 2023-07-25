@@ -44,6 +44,10 @@ func (e *General) Start() (err error) {
 	e.ConsoleOutput = io.MultiReader(stdout, stderr)
 	e.process = process
 
+	if err = process.Start(); err != nil {
+		return
+	}
+
 	return
 }
 
