@@ -1,4 +1,4 @@
-package environments
+package common
 
 import (
 	"io"
@@ -25,6 +25,10 @@ type Environment interface {
 	Stop() error
 	Kill() error
 	Delete() error
+
+	GetStatus() State
+	SetStatus() State
+	GetBase() *BaseEnvironment
 }
 
 type BaseEnvironment struct {
@@ -40,6 +44,7 @@ type BaseEnvironment struct {
 	WorkingDirectory string            `json:"working_directory"` // working directory of the environment
 
 	ConsoleOutput io.Reader
+	SystemOutput  io.Reader
 	ConsoleInput  io.Writer
 
 	state State
@@ -49,6 +54,14 @@ func (e *BaseEnvironment) GetRootPath() string {
 	return e.RootPath
 }
 
-func (e *BaseEnvironment) GetState() State {
+func (e *BaseEnvironment) SetState(state State) {
+	e.state = state
+}
+
+func (e *BaseEnvironment) GetStatus() (state State) {
 	return e.state
+}
+
+func (e *BaseEnvironment) GetBase() *BaseEnvironment {
+	return e
 }

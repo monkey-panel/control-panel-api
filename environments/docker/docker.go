@@ -1,9 +1,9 @@
 package docker
 
-import "github.com/monkey-panel/control-panel-api/environments"
+import "github.com/monkey-panel/control-panel-api/environments/common"
 
 type Docker struct {
-	environments.BaseEnvironment
+	common.BaseEnvironment
 }
 
 func (e *Docker) Setup() (err error) {
