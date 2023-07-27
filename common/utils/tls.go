@@ -29,8 +29,9 @@ func baseCertificate(serialNumber int64) *x509.Certificate {
 }
 
 func GenerateCACertificate() (*x509.Certificate, *rsa.PrivateKey) {
-	ca := baseCertificate(1653)
+	ca := baseCertificate(1)
 	ca.Subject.Organization = []string{"Monkey-Cat"}
+	ca.Subject.CommonName = "Monkey-Cat-Root-CA"
 	ca.SubjectKeyId = []byte{1, 2, 3, 4, 5}
 	ca.BasicConstraintsValid = true
 	ca.IsCA = true
@@ -44,7 +45,7 @@ func GenerateCACertificate() (*x509.Certificate, *rsa.PrivateKey) {
 }
 
 func GenerateCertificate(ca *x509.Certificate, caKey *rsa.PrivateKey, organizations []string) Certificate {
-	cert := baseCertificate(1658)
+	cert := baseCertificate(10)
 	cert.Subject.Organization = organizations
 	cert.SubjectKeyId = []byte{1, 2, 3, 4, 6}
 	cert.DNSNames = append(cert.DNSNames, "127.0.0.1")
