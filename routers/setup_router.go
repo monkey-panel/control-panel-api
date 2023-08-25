@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/monkey-panel/control-panel-api/common"
+	"github.com/monkey-panel/control-panel-api/global"
 	"github.com/monkey-panel/control-panel-api/routers/api"
 
 	"github.com/gin-contrib/cors"
@@ -16,10 +16,11 @@ type RouterConfig struct {
 	AllowOrigins    []string
 }
 
-func Routers(container common.Container, config RouterConfig) *gin.Engine {
+func Routers(config RouterConfig) *gin.Engine {
 	app := gin.Default()
 	app.Use(func(c *gin.Context) {
-		c.Set("DB", container.DB)
+		c.Set(global.DBKey, global.DB)
+		c.Set(global.LogKey, global.Log)
 		c.Next()
 	}).Use(cors.New(corsConfig(config)))
 
@@ -34,8 +35,8 @@ func Routers(container common.Container, config RouterConfig) *gin.Engine {
 	})...)
 
 	apiRouter := app.Group("/api")
-	api.RegisterRouter(container, apiRouter)
-	api.RegisterRouter(container, apiRouter.Group("/v1"))
+	api.RegisterRouter(apiRouter)
+	api.RegisterRouter(apiRouter.Group("/v1"))
 
 	return app
 }

@@ -1,15 +1,14 @@
-package logging
+package global
 
 import (
 	"fmt"
-	"testing"
 
 	"github.com/gookit/slog"
 	"github.com/gookit/slog/handler"
 	"github.com/gookit/slog/rotatefile"
 )
 
-func TestLog(t *testing.T) {
+func init() {
 	h1, err := handler.NewEmptyConfig(
 		handler.WithLogfile("./base-info.log"),        // set log file path
 		handler.WithRotateMode(rotatefile.ModeRename), // rename old log file
@@ -24,9 +23,5 @@ func TestLog(t *testing.T) {
 
 	f := slog.AsTextFormatter(h1.Formatter())
 	f.SetTemplate("[{{datetime}}] {{level}} {{caller}} {{message}}\n")
-	logs := slog.NewWithHandlers(h1)
-	logs.Debug("test")
-	logs.Info("test")
-	logs.Error("test")
-	logs.Notice("test")
+	Log = slog.NewWithHandlers(h1)
 }

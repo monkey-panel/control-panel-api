@@ -1,17 +1,14 @@
 package api
 
-import (
-	"github.com/monkey-panel/control-panel-api/common"
+import "github.com/gin-gonic/gin"
 
-	"github.com/gin-gonic/gin"
-)
 
-var router = []func(common.Container, *gin.RouterGroup){}
+var router = []func(*gin.RouterGroup){}
 
-func RegisterRouter(container common.Container, app *gin.RouterGroup) {
+func RegisterRouter(app *gin.RouterGroup) {
 	app.Use(JSONMiddleware)
 
 	for _, f := range router {
-		f(container, app)
+		f(app)
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/monkey-panel/control-panel-api/common/codes"
 	"github.com/monkey-panel/control-panel-api/common/database"
 	"github.com/monkey-panel/control-panel-api/common/utils"
+	"github.com/monkey-panel/control-panel-api/global"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,8 +16,8 @@ func init() {
 	router = append(router, registerAuthRouter, registerUsersRouter)
 }
 
-func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
-	db, authRouter := container.DB, app.Group("/auth")
+func registerAuthRouter(app *gin.RouterGroup) {
+	db, authRouter := global.DB, app.Group("/auth")
 
 	authRouter.POST("/login", func(c *gin.Context) {
 		currentUser := GetUserFromContext(c)
@@ -69,7 +70,7 @@ func registerAuthRouter(container common.Container, app *gin.RouterGroup) {
 	})
 }
 
-func registerUsersRouter(container common.Container, app *gin.RouterGroup) {
+func registerUsersRouter(app *gin.RouterGroup) {
 	usersRouter := app.Group("/users", AuthorizationMiddleware)
 	usersRouterMe := usersRouter.Group("/@me")
 	usersRouterOther := usersRouter.Group("/:id")

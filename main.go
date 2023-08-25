@@ -8,8 +8,6 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/monkey-panel/control-panel-api/common"
-	"github.com/monkey-panel/control-panel-api/common/database"
 	"github.com/monkey-panel/control-panel-api/common/utils"
 	"github.com/monkey-panel/control-panel-api/routers"
 
@@ -27,13 +25,7 @@ func main() {
 		utils.AutoWriteFile("data/server.pem", ssl.ServerKey, os.ModePerm)
 		utils.AutoWriteFile("data/server.key", ssl.ServerPem, os.ModePerm)
 	}
-	// generate database
-	db, err := database.NewDB("data/db.db")
-	if err != nil {
-		panic(err)
-	}
 
-	container := common.Container{DB: db}
 	mode := gin.ReleaseMode
 	if len(os.Getenv("DEV")) > 0 {
 		mode = gin.DebugMode
@@ -44,7 +36,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr: config.Address,
-		Handler: routers.Routers(container, routers.RouterConfig{
+		Handler: routers.Routers(routers.RouterConfig{
 			AllowOrigins: config.AllowOrigins,
 		}),
 	}
